@@ -10,3 +10,8 @@
 
 ```pip install scrapy```
 
+## Create project
+
+```scrapy startproject bookscraper```
+
+
