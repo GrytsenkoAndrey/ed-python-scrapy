@@ -1,24 +1,23 @@
 import scrapy
-from bookscraper.bookscraper.items import BookItem
+#from bookscraper.bookscraper.items import BookItem
 
 class BooksSpider(scrapy.Spider):
     name = 'books'
     allowed_domains = ['books.toscrape.com']
-    custom_settings = {
-        'FEEDS': { 'data.csv': { 'format': 'csv'}}
-    }
+    start_urls = ['https://books.toscrape.com/']
+    # custom_settings = {
+    #     'FEEDS': { 'data.csv': { 'format': 'csv'}}
+    # }
 
-    def start_requests(self):
-        url = 'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html'
-        yield scrapy.Request(url, callback=self.parse)
+    #def start_requests(self):
+    #    url = 'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html'
 
-    def parse(self, response):
-        product = response.css('div.product_main')
+    def parse(self, response, **kwargs):
+        books = response.css('article.product_pod')
 
-        book_item = BookItem()
-        book_item['title'] = product.css('h1 ::text').extract_first()
-        book_item['category'] = response.xpath("//ul[@class='breadcrumb']/li[@class='active]")
-        book_item['description'] = response.xpath("//div[@id='product_description']/following")
-        book_item['price'] = response.css('p.price_color ::text').extract_first()
-
-        yield book_item
+        for book in books:
+            yield{
+                'name': book.css('h3 a::text').get(),
+                'price': book.css('.product_price .price_color::text').get(),
+                'url': book.css('h3 a').attrib['href']
+            }
