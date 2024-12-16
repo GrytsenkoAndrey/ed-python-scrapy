@@ -3,6 +3,7 @@ from bookscraper.bookscraper.items import BookItem
 
 class BooksSpider(scrapy.Spider):
     name = 'books'
+    allowed_domains = ['books.toscrape.com']
     custom_settings = {
         'FEEDS': { 'data.csv': { 'format': 'csv'}}
     }
