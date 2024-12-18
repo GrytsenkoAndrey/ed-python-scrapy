@@ -22,4 +22,4 @@
 2. Activate the Python Virtual Environment: ```source venv/bin/activate```
 3. Install Scrapy using pip: ```pip install scrapy```
 4. Listing the scrapy projects ```scrapy list```
-5. Running the scrapy project: ```scrapy crawl <command>```
+5. Running the scrapy project: ```scrapy crawl books -O books.csv```
