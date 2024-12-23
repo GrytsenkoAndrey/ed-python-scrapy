@@ -3,12 +3,19 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-import scrapy
 from scrapy.item import Item, Field
 
 
 class BookItem(Item):
+    url = Field()
     title = Field()
+    upc = Field()
+    product_type = Field()
+    price_excl_tax = Field()
+    price_incl_tax = Field()
+    tax = Field()
+    availability = Field()
+    num_reviews = Field()
     category = Field()
     description = Field()
     price = Field()
