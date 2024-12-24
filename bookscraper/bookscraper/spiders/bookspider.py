@@ -1,4 +1,4 @@
-import scrapy
+import scrapy, re
 #from ..items import BookItem
 
 class BooksSpider(scrapy.Spider):
@@ -48,19 +48,26 @@ class BooksSpider(scrapy.Spider):
         # book_item['description'] = response.xpath("//div[@id='product_description']/following-sibling::p/text()").get()
         # book_item['price'] = response.css('p.price_color ::text').get()
         # yield BookItem
+        title = response.css('.product_main h1::text').get()
+        category = response.xpath(
+                "//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get()
+        price_excl_tax = table_rows[2].css('td ::text').get()
+        price_incl_tax = table_rows[3].css('td ::text').get()
+        tax = table_rows[4].css('td ::text').get()
+        price = response.css('p.price_color ::text').get()
+        availability = table_rows[5].css('td ::text').get()
 
         yield {
             'url': response.url,
-            'title': response.css('.product_main h1::text').get(),
+            'title': title.strip(),
             'product_type': table_rows[1].css('td ::text').get(),
-            'price_excl_tax': table_rows[2].css('td ::text').get(),
-            'price_incl_tax': table_rows[3].css('td ::text').get(),
-            'tax': table_rows[4].css('td ::text').get(),
-            'availability': table_rows[5].css('td ::text').get(),
+            'price_excl_tax': float(price_excl_tax[1:]),
+            'price_incl_tax': float(price_incl_tax[1:]),
+            'tax': float(tax[1:]),
+            'availability': re.findall('(-?\d+(?:\.\d+)?)', availability)[0],
             'num_reviews': table_rows[6].css('td ::text').get(),
             'stars': response.css('p.star-rating').attrib['class'],
-            'category': response.xpath(
-                "//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get(),
+            'category': category.lower(),
             'description': response.xpath("//div[@id='product_description']/following-sibling::p/text()").get(),
-            'price': response.css('p.price_color ::text').get()
+            'price': float(price[1:])
         }
